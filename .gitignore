@@ -1,1 +1,3 @@
-*.pkl
+Airlines.csv
+rf_model.pkl
+xgb_model.pkl

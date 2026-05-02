@@ -1,40 +1,12 @@
 from flask import Flask, render_template, request
+import joblib
 import numpy as np
 import os
-import pandas as pd
-from sklearn.feature_selection import SelectKBest, f_classif
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-import warnings
-warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 
-# Train simple fast model on startup
-print("Loading data and training model...")
-df = pd.read_csv('Airlines.csv')
-df = df.drop('id', axis=1)
-df_encoded = pd.get_dummies(df, columns=['Airline','AirportFrom','AirportTo'], drop_first=True)
-
-X = df_encoded.drop('Delay', axis=1)
-y = df_encoded['Delay']
-
-selector = SelectKBest(score_func=f_classif, k=10)
-selector.fit(X, y)
-feature_scores = pd.DataFrame({
-    'Feature': X.columns,
-    'Score': selector.scores_
-}).sort_values('Score', ascending=False)
-top_features = feature_scores.head(10)['Feature'].tolist()
-X_selected = X[top_features]
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X_selected, y, test_size=0.2, random_state=42
-)
-
-model = LogisticRegression(max_iter=1000, random_state=42)
-model.fit(X_train, y_train)
-print("Model ready!")
+model = joblib.load('lr_deploy.pkl')
+top_features = joblib.load('lr_features.pkl')
 
 @app.route('/')
 def home():
