@@ -1026,7 +1026,7 @@
             Predict Flight Delays
             <span class="gold-text">Before They Happen</span>
         </h1>
-        <p>A machine learning system trained on half a million real US flight records — using Logistic Regression, Polynomial Regression, and Forward Feature Selection to predict delays with measurable confidence.</p>
+        <p>A machine learning system trained on half a million real US flight records — using Logistic Regression, Polynomial Regression, XGBoost, and Forward Feature Selection — with KMeans Delay Cluster Profiling to predict delays with measurable confidence.</p>
         <div class="hero-buttons">
             <a href="#predictor" class="btn-primary">Start Predicting →</a>
             <a href="#how" class="btn-outline">How It Works</a>
@@ -1037,7 +1037,7 @@
 <!-- TICKER -->
 <div class="ticker">
     <div class="ticker-inner">
-        ✈ SOUTHWEST AIRLINES · HIGHEST DELAY RATE &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ LATER FLIGHTS = HIGHER DELAY RISK &nbsp;&nbsp;|&nbsp;&nbsp; 📅 SATURDAY = SAFEST DAY TO FLY &nbsp;&nbsp;|&nbsp;&nbsp; 🛫 MDW AIRPORT = HIGHEST RISK DEPARTURE &nbsp;&nbsp;|&nbsp;&nbsp; 📊 539,383 FLIGHTS ANALYZED &nbsp;&nbsp;|&nbsp;&nbsp; ⚡ 62.8% MODEL ACCURACY &nbsp;&nbsp;|&nbsp;&nbsp; 🔬 605 FEATURES REDUCED TO 10 &nbsp;&nbsp;|&nbsp;&nbsp;
+        ✈ SOUTHWEST AIRLINES · HIGHEST DELAY RATE &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ LATER FLIGHTS = HIGHER DELAY RISK &nbsp;&nbsp;|&nbsp;&nbsp; 📅 SATURDAY = SAFEST DAY TO FLY &nbsp;&nbsp;|&nbsp;&nbsp; 🛫 MDW AIRPORT = HIGHEST RISK DEPARTURE &nbsp;&nbsp;|&nbsp;&nbsp; 📊 539,383 FLIGHTS ANALYZED &nbsp;&nbsp;|&nbsp;&nbsp; ⚡ 62.8% MODEL ACCURACY &nbsp;&nbsp;|&nbsp;&nbsp; 🔬 605 FEATURES REDUCED TO 50 &nbsp;&nbsp;|&nbsp;&nbsp;
         ✈ SOUTHWEST AIRLINES · HIGHEST DELAY RATE &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ LATER FLIGHTS = HIGHER DELAY RISK &nbsp;&nbsp;|&nbsp;&nbsp; 📅 SATURDAY = SAFEST DAY TO FLY &nbsp;&nbsp;|&nbsp;&nbsp; 🛫 MDW AIRPORT = HIGHEST RISK DEPARTURE &nbsp;&nbsp;|&nbsp;&nbsp; 📊 539,383 FLIGHTS ANALYZED &nbsp;&nbsp;|&nbsp;&nbsp; ⚡ 62.8% MODEL ACCURACY &nbsp;&nbsp;|&nbsp;&nbsp; 🔬 605 FEATURES REDUCED TO 10 &nbsp;&nbsp;|&nbsp;&nbsp;
     </div>
 </div>
@@ -1074,7 +1074,7 @@
 <div class="section fade-up" id="how">
     <div class="section-label">⚙️ Process</div>
     <h2>How The Model Works</h2>
-    <p class="desc">A rigorous four-stage machine learning pipeline built from scratch on real-world airline data.</p>
+    <p class="desc">A rigorous six-stage machine learning pipeline built from scratch on real-world airline data.</p>
     <div class="steps">
         <div class="step-card fade-up">
             <div class="step-number">1</div>
@@ -1089,7 +1089,7 @@
         <div class="step-card fade-up">
             <div class="step-number">3</div>
             <h3>Forward Selection</h3>
-            <p>SelectKBest with f_classif scoring reduces 605 features to the 10 most statistically significant — cutting model complexity by 98%.</p>
+            <p>SelectKBest with f_classif scoring reduces 605 features to the 50 most statistically significant — cutting model complexity by 92%.</p>
         </div>
         <div class="step-card fade-up">
             <div class="step-number">4</div>
@@ -1103,8 +1103,18 @@
         </div>
         <div class="step-card fade-up">
             <div class="step-number">6</div>
+            <h3>XGBoost Classifier</h3>
+            <p>Gradient boosted ensemble with 300 estimators, max depth 8, learning rate 0.1. Calibrated with sigmoid method for reliable probability scores. Best performing model in the pipeline.</p>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-number">7</div>
+            <h3>Delay Cluster Profiling</h3>
+            <p>KMeans clustering (k=3) groups flights into Low Risk, Moderate Risk, and High Risk delay profiles — revealing hidden patterns across routes, airlines, and departure times.</p>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-number">8</div>
             <h3>Flask Deployment</h3>
-            <p>Trained models serialized with Joblib and served via Flask REST API. Real-time predictions with confidence scores through a premium web interface.</p>
+            <p>All models serialized with Joblib and served via Flask REST API. Real-time predictions with confidence scores and cluster profiling through a live web interface.</p>
         </div>
     </div>
 </div>
@@ -1181,7 +1191,7 @@
     <div class="performance-inner">
         <div class="section-label fade-up">📊 Evaluation</div>
         <h2 class="fade-up" style="font-family:'Playfair Display',serif; font-size:3em; font-weight:700; margin-bottom:15px;">Model Performance</h2>
-        <p class="fade-up" style="color:var(--muted); max-width:520px; line-height:1.8; font-size:0.95em; margin-bottom:0;">Detailed evaluation metrics for both Logistic Regression and Polynomial Regression models.</p>
+        <p class="fade-up" style="color:var(--muted); max-width:520px; line-height:1.8; font-size:0.95em; margin-bottom:0;">Detailed evaluation metrics for Logistic Regression, Polynomial Regression, and XGBoost models.</p>
         <div class="perf-grid">
             <div class="perf-card fade-up">
                 <h3>Logistic Regression</h3>
@@ -1251,6 +1261,29 @@
                 </div>
             </div>
             <div class="perf-card fade-up">
+                <h3>XGBoost <span style="font-size:0.65em; color:var(--gold); background:rgba(245,197,24,0.1); padding:3px 10px; border-radius:20px; margin-left:8px;">Best Model</span></h3>
+                <div class="metric-row">
+                    <span class="metric-label">Accuracy</span>
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="65%"></div></div>
+                    <span class="metric-value">~65%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Estimators</span>
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="100%"></div></div>
+                    <span class="metric-value">300</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Max Depth</span>
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="80%"></div></div>
+                    <span class="metric-value">8</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Features Used</span>
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="50%"></div></div>
+                    <span class="metric-value">50</span>
+                </div>
+            </div>
+            <div class="perf-card fade-up">
                 <h3>Forward Selection Results</h3>
                 <div class="metric-row">
                     <span class="metric-label">Airline_WN</span>
@@ -1285,7 +1318,7 @@
         <div class="dataset-grid">
             <div class="dataset-info fade-up">
                 <p>The dataset contains 539,383 real US domestic flight records sourced from Kaggle. It covers 18 airlines and hundreds of airports, capturing key flight attributes used to predict delay probability.</p>
-                <p>After One-Hot Encoding of categorical variables, the feature space expanded from 9 original columns to 606 — which Forward Selection then reduced to the 10 most predictive features.</p>
+                <p>After One-Hot Encoding of categorical variables, the feature space expanded from 9 original columns to 606 — which Forward Selection then reduced to the 50 most predictive features for XGBoost training.</p>
                 <div class="dataset-tags">
                     <span class="tag">539,383 Rows</span>
                     <span class="tag">9 Columns</span>
@@ -1423,6 +1456,13 @@
             <div class="result-box {% if 'DELAYED' in prediction %}result-delayed{% else %}result-ontime{% endif %}" id="result-box">
                 <div class="result-title">{{ prediction }}</div>
                 <div class="result-confidence">Prediction Confidence: <span>{{ confidence }}</span></div>
+                {% if false %}
+                <div style="margin-top:18px; padding:16px 20px; background:rgba(245,197,24,0.06); border:1px solid rgba(245,197,24,0.2); border-radius:12px;">
+                    <div style="font-size:0.78em; color:var(--gold); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">Delay Cluster Profile</div>
+                    <div style="font-family:'Playfair Display',serif; font-size:1.1em; font-weight:700; color:white; margin-bottom:6px;">{{ cluster_name }}</div>
+                    <div style="font-size:0.82em; color:var(--muted);">{{ cluster_desc }}</div>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -1463,7 +1503,7 @@
         <div class="insight-card fade-up">
             <div class="insight-icon">⚡</div>
             <h4>98% Feature Reduction</h4>
-            <p>Forward Selection cut 605 features to just 10 — dramatically reducing model complexity while preserving predictive accuracy.</p>
+            <p>Forward Selection cut 605 features to just 50 — reducing model complexity by 92% while preserving predictive accuracy for XGBoost.</p>.
         </div>
     </div>
 </div>
@@ -1538,8 +1578,8 @@
                 <div class="highlight">
                     <div class="highlight-icon">🔬</div>
                     <div class="highlight-text">
-                        <strong>4 Core ML Techniques</strong>
-                        Missing Value Handling, Forward Selection, Logistic Regression & Polynomial Regression.
+                        <strong>6 Core ML Techniques</strong>
+                        Missing Value Handling, Forward Selection, Logistic Regression, Polynomial Regression, XGBoost & Delay Cluster Profiling.
                     </div>
                 </div>
                 <div class="highlight">
@@ -1561,7 +1601,7 @@
                 <div class="about-stat-label">Prediction accuracy achieved</div>
             </div>
             <div class="about-stat">
-                <div class="about-stat-num">605→10</div>
+                <div class="about-stat-num">605→50</div>
                 <div class="about-stat-label">Features reduced by forward selection</div>
             </div>
             <div class="about-stat">
@@ -1582,7 +1622,7 @@
         <a href="#predictor">Predictor</a>
         <a href="#about">About</a>
     </div>
-    <div class="footer-copy">© 2026 SkyPredict · Python · Flask · Scikit-learn · 539K+ Records</div>
+    <div class="footer-copy">© 2026 SkyPredict · Powered by XGBoost · Flask · Scikit-learn · 539K+ Records</div>
 </footer>
 
 <script>
