@@ -337,6 +337,8 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 22px;
         }
+        .step-card:nth-child(7) { grid-column: 1 / 2; }
+        .step-card:nth-child(8) { grid-column: 2 / 4; }
 
         .step-card {
             background: var(--card);
@@ -1050,7 +1052,7 @@
     </div>
     <div class="stat-divider"></div>
     <div class="stat-item">
-        <div class="stat-number" data-target="62.8" data-decimal="1" data-suffix="%">0</div>
+        <div class="stat-number" data-target="64.91" data-decimal="2" data-suffix="%">0</div>
         <div class="stat-label">Model Accuracy</div>
     </div>
     <div class="stat-divider"></div>
@@ -1065,7 +1067,7 @@
     </div>
     <div class="stat-divider"></div>
     <div class="stat-item">
-        <div class="stat-number" data-target="4">0</div>
+        <div class="stat-number" data-target="6">0</div>
         <div class="stat-label">ML Techniques</div>
     </div>
 </div>
@@ -1264,8 +1266,8 @@
                 <h3>XGBoost <span style="font-size:0.65em; color:var(--gold); background:rgba(245,197,24,0.1); padding:3px 10px; border-radius:20px; margin-left:8px;">Best Model</span></h3>
                 <div class="metric-row">
                     <span class="metric-label">Accuracy</span>
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="65%"></div></div>
-                    <span class="metric-value">~65%</span>
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="64.91%"></div></div>
+                    <span class="metric-value">64.91%</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">Estimators</span>
@@ -1281,29 +1283,6 @@
                     <span class="metric-label">Features Used</span>
                     <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="50%"></div></div>
                     <span class="metric-value">50</span>
-                </div>
-            </div>
-            <div class="perf-card fade-up">
-                <h3>Forward Selection Results</h3>
-                <div class="metric-row">
-                    <span class="metric-label">Airline_WN</span>
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="100%"></div></div>
-                    <span class="metric-value">31,067</span>
-                </div>
-                <div class="metric-row">
-                    <span class="metric-label">Time</span>
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="40%"></div></div>
-                    <span class="metric-value">12,492</span>
-                </div>
-                <div class="metric-row">
-                    <span class="metric-label">MDW Airport</span>
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="8%"></div></div>
-                    <span class="metric-value">2,457</span>
-                </div>
-                <div class="metric-row">
-                    <span class="metric-label">Airline_YV</span>
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:0%" data-width="7.5%"></div></div>
-                    <span class="metric-value">2,348</span>
                 </div>
             </div>
         </div>
@@ -1372,8 +1351,9 @@
             <form method="POST" action="/predict">
                 <div class="form-row">
                     <div class="form-group full-width">
-                        <label>Departure Time (minutes from midnight)</label>
-                        <input type="number" name="Time" placeholder="480 = 8:00 AM  ·  720 = 12:00 PM  ·  1200 = 8:00 PM" required>
+                        <label>Departure Time</label>
+                        <input type="time" name="TimeActual" id="timeInput" required>
+<input type="hidden" name="Time" id="timeMinutes">
                     </div>
                 </div>
                 <div class="form-row">
@@ -1456,7 +1436,7 @@
             <div class="result-box {% if 'DELAYED' in prediction %}result-delayed{% else %}result-ontime{% endif %}" id="result-box">
                 <div class="result-title">{{ prediction }}</div>
                 <div class="result-confidence">Prediction Confidence: <span>{{ confidence }}</span></div>
-                {% if false %}
+                {% if cluster_name %}
                 <div style="margin-top:18px; padding:16px 20px; background:rgba(245,197,24,0.06); border:1px solid rgba(245,197,24,0.2); border-radius:12px;">
                     <div style="font-size:0.78em; color:var(--gold); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">Delay Cluster Profile</div>
                     <div style="font-family:'Playfair Display',serif; font-size:1.1em; font-weight:700; color:white; margin-bottom:6px;">{{ cluster_name }}</div>
@@ -1743,6 +1723,14 @@ setTimeout(() => {
     document.getElementById('result-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }, 400);
 {% endif %}
+// Convert time picker to minutes
+document.querySelector('form').addEventListener('submit', function() {
+    const timeVal = document.getElementById('timeInput').value;
+    if(timeVal) {
+        const [hours, minutes] = timeVal.split(':').map(Number);
+        document.getElementById('timeMinutes').value = hours * 60 + minutes;
+    }
+});
 </script>
 </body>
 </html>

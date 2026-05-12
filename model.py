@@ -131,3 +131,54 @@ joblib.dump(top_features, 'top_features.pkl')
 joblib.dump(poly_model, 'poly_model.pkl')
 joblib.dump(poly, 'poly_transformer.pkl')
 print("All models saved!")
+# ---- DELAY CLUSTER PROFILING (KMeans) ----
+print("\n=== DELAY CLUSTER PROFILING ===")
+from sklearn.cluster import KMeans
+
+# Use numerical features for clustering
+cluster_features = df[['Time', 'Length', 'DayOfWeek', 'Delay']]
+
+# KMeans with 3 clusters
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+kmeans.fit(cluster_features)
+
+# Add cluster labels
+df['Cluster'] = kmeans.labels_
+
+# Analyze clusters
+cluster_analysis = df.groupby('Cluster').agg({
+    'Delay': 'mean',
+    'Time': 'mean',
+    'Length': 'mean',
+    'DayOfWeek': 'mean'
+}).round(2)
+
+print("\nCluster Analysis:")
+print(cluster_analysis)
+
+# Plot clusters
+plt.figure(figsize=(10,6))
+colors = ['#10B981', '#F5C518', '#EF4444']
+labels = ['Low Risk', 'Moderate Risk', 'High Risk']
+
+# Sort clusters by delay rate
+delay_order = cluster_analysis['Delay'].sort_values().index.tolist()
+
+for i, cluster_id in enumerate(delay_order):
+    mask = df['Cluster'] == cluster_id
+    plt.scatter(df[mask]['Time'], df[mask]['Delay'],
+               c=colors[i], label=labels[i], alpha=0.3, s=5)
+
+plt.title("Delay Cluster Profiling — KMeans (k=3)")
+plt.xlabel("Departure Time (minutes from midnight)")
+plt.ylabel("Delay (0=On Time, 1=Delayed)")
+plt.legend()
+plt.tight_layout()
+plt.savefig('cluster_profiling.png')
+plt.close()
+print("Cluster graph saved!")
+
+# Save kmeans model
+joblib.dump(kmeans, 'kmeans_model.pkl')
+joblib.dump(delay_order, 'cluster_order.pkl')
+print("KMeans model saved!")
